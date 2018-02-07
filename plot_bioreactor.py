@@ -17,6 +17,18 @@ from matplotlib import pyplot as plt
 
 def plot_time_evolution(times, substrate_ts, culture_ts, title="Time evolution", grid=True, savefig=False,
                         output_dir="./Images", **kwargs):
+    """
+    Generates plot of time evolution for substrate and culture.
+    :param times:
+    :param substrate_ts:
+    :param culture_ts:
+    :param title:
+    :param grid:
+    :param savefig:
+    :param output_dir:
+    :param kwargs:
+    :return:
+    """
     plt.figure()
     plt.plot(times, substrate_ts, label='substrate', linestyle="dashed", color="black", **kwargs)
     plt.plot(times, culture_ts, label='culture', linestyle="solid", color="black", **kwargs)
@@ -34,6 +46,20 @@ def plot_time_evolution(times, substrate_ts, culture_ts, title="Time evolution",
 def plot_specific_growth_function(specific_growth_func, specific_growth_func_params, substrate_min=0.1, substrate_max=1.0, num_samples=100,
                                   title="Specific growth function", grid=True, savefig=False, output_dir="./Images",
                                   **kwargs):
+    """
+    Generates plot of specific growth as function of substrate concentration.
+    :param specific_growth_func:
+    :param specific_growth_func_params:
+    :param substrate_min:
+    :param substrate_max:
+    :param num_samples:
+    :param title:
+    :param grid:
+    :param savefig:
+    :param output_dir:
+    :param kwargs:
+    :return:
+    """
     plt.figure()
     substrate = np.linspace(substrate_min, substrate_max, num_samples)
     specific_growth = specific_growth_func(substrate, specific_growth_func_params)
