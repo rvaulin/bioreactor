@@ -7,7 +7,7 @@ from optparse import *
 import glob
 import re
 
-import numpy
+import numpy as np
 import cPickle
 
 
@@ -37,6 +37,15 @@ def monoid_specific_growth_rate(substrate, params):
     :return:
     """
     mu_star = params['mu_star']
+    K = params['K']
+    return mu_star * substrate / (float(K) + substrate)
+
+def monoid_quadratic_specific_growth_rate(substrate, params):
+    physical_state_vector = params['physical_state_vector']
+    inverse_covarience_matrix = params['inverse_covarience_matrix']
+    shift_vector = params['shift_vector']
+    shifted_state_vector = physical_state_vector - shift_vector
+    mu_star = np.dot(shifted_state_vector, np.dot(inverse_covarience_matrix,shifted_state_vector))
     K = params['K']
     return mu_star * substrate / (float(K) + substrate)
 
