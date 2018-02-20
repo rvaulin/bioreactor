@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 
 
 
-def plot_time_evolution(times, substrate_ts, culture_ts, title="Time evolution", grid=True, savefig=False,
+def plot_time_evolution(evolution_dataframe, title="Time evolution", grid=True, savefig=False,
                         output_dir="./Images", **kwargs):
     """
     Generates plot of time evolution for substrate and culture.
@@ -30,8 +30,8 @@ def plot_time_evolution(times, substrate_ts, culture_ts, title="Time evolution",
     :return:
     """
     plt.figure()
-    plt.plot(times, substrate_ts, label='substrate', linestyle="dashed", color="black", **kwargs)
-    plt.plot(times, culture_ts, label='culture', linestyle="solid", color="black", **kwargs)
+    plt.plot(evolution_dataframe['times'], evolution_dataframe['substrate'], label='substrate', linestyle="dashed", color="black", **kwargs)
+    plt.plot(evolution_dataframe['times'], evolution_dataframe['culture'], label='culture', linestyle="solid", color="black", **kwargs)
     plt.title(title)
     plt.legend(loc=0)
     plt.xlabel("time, hours")
@@ -43,21 +43,36 @@ def plot_time_evolution(times, substrate_ts, culture_ts, title="Time evolution",
         plt.savefig(output_dir + "/time_evolution.png")
 
 
-def plot_family_of_time_evolutions(evolutions, variable_name, markers, title="Time evolution", grid=True, savefig=False,
-                        output_dir="./Images", **kwargs):
+def plot_family_of_time_evolutions(evolutions, variable_name, markers, predicted_evolutions=None, optimal_evolution=None,
+                                   title="Time evolution", grid=True, savefig=False,
+                                   output_dir="./Images", **kwargs):
     plt.figure()
-    for (variable, (times,substrate_ts, culture_ts)) in evolutions.items():
-        plt.plot(times, culture_ts, label=variable_name + " = " + str(variable),
+    for (variable, evolution_dataframe) in evolutions.items():
+        plt.plot(evolution_dataframe['times'], evolution_dataframe['culture'], label=variable_name + " = " + str(variable),
                  marker=markers[variable], linestyle="solid", color="black", **kwargs)
+        if predicted_evolutions:
+            predicted_evolution_dataframe = predicted_evolutions[variable]
+            plt.plot(predicted_evolution_dataframe['times'], predicted_evolution_dataframe['culture'], label=variable_name + " = " + str(variable),
+                     marker=markers[variable], linestyle="solid", color="blue", **kwargs)
+    if optimal_evolution:
+        plt.plot(optimal_evolution[0], optimal_evolution[1],
+                 label="optimal",
+                 marker="*", linestyle="solid", color="red", **kwargs)
     plt.title(title)
     plt.legend(loc=0)
     plt.xlabel("time, hours")
     plt.ylabel("concentration")
     plt.grid(grid)
     if savefig:
+        if predicted_evolutions and optimal_evolution:
+            filename = "time_evolution_with_predicion_and_optimal_vs_%s.png" % variable_name
+        elif predicted_evolutions:
+            filename = "time_evolution_with_predicion_vs_%s.png" % variable_name
+        else:
+            filename = "time_evolution_vs_%s.png" % variable_name
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
-        plt.savefig(output_dir + "/time_evolution_vs_%s.png" % variable_name)
+        plt.savefig(output_dir + "/" + filename)
 
 
 def plot_specific_growth_function(specific_growth_func, specific_growth_func_params, substrate_min=0.1, substrate_max=1.0, num_samples=100,
